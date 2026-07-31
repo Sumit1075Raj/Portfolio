@@ -109,6 +109,7 @@ npm run build
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
+watch live on  : https://sumitrajdev.netlify.app/
 ---
 
 <p center>
