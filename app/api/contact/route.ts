@@ -1,10 +1,21 @@
 import { Resend } from "resend"
 import { NextResponse } from "next/server"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request) {
   try {
+    const apiKey = process.env.RESEND_API_KEY
+    const contactEmail = process.env.CONTACT_EMAIL
+
+    if (!apiKey || !contactEmail) {
+      console.error("RESEND_API_KEY or CONTACT_EMAIL environment variable is not set")
+      return NextResponse.json(
+        { error: "Server configuration error: Missing environment variables" },
+        { status: 500 }
+      )
+    }
+
     const { name, email, jobDescription, message } = await request.json()
 
     // Validate required fields
@@ -24,15 +35,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const contactEmail = process.env.CONTACT_EMAIL
-
-    if (!contactEmail) {
-      console.error("CONTACT_EMAIL environment variable is not set")
-      return NextResponse.json(
-        { error: "Server configuration error" },
-        { status: 500 }
-      )
-    }
+    const resend = new Resend(apiKey)
 
     // Send email using Resend
     const { data, error } = await resend.emails.send({
